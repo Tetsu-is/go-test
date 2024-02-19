@@ -7,19 +7,28 @@ import (
 	"github.com/mileusna/useragent"
 )
 
+type ctxKey string
+
+const (
+	osKey ctxKey = "OS"
+)
+
+func SetOS(r *http.Request) *http.Request {
+	userAgent := r.UserAgent()
+	ua := useragent.Parse(userAgent)
+	ctx := context.WithValue(r.Context(), osKey, ua.OS)
+	r = r.WithContext(ctx)
+	return r
+}
+
+func GetOS(r *http.Request) string {
+	return r.Context().Value(osKey).(string)
+}
+
 func UserAgent(h http.Handler) http.Handler {
 
-	type key string
-
-	const (
-		osKey key = "OS"
-	)
-
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		userAgents := r.UserAgent()
-		ua := useragent.Parse(userAgents)
-		ctx := context.WithValue(r.Context(), osKey, ua.OS)
-		r = r.WithContext(ctx)
+		r = SetOS(r)
 		h.ServeHTTP(w, r)
 	}
 
