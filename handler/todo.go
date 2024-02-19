@@ -3,10 +3,8 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
-	"test/handler/middleware"
 	"test/model"
 	"test/service"
 )
@@ -77,10 +75,6 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		//check if the context is stored correctly
-		fmt.Println("check OS")
-		fmt.Println(middleware.GetOS(r))
 	}
 
 	if r.Method == http.MethodPut {

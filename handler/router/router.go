@@ -13,7 +13,6 @@ func NewRouter(todoDB *sql.DB) *http.ServeMux {
 	todoService := service.NewTODOService(todoDB)
 	mux := http.NewServeMux()
 	mux.Handle("/todos", middleware.UserAgent(middleware.AccessLogger(handler.NewTODOHandler(todoService))))
-	// mux.HandleFunc("/do-panic", handler.NewPanicHandler().ServeHTTP)
 	mux.Handle("/do-panic", middleware.Recovery(handler.NewPanicHandler()))
 	return mux
 }
