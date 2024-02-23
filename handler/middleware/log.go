@@ -24,9 +24,10 @@ func AccessLogger(h http.Handler) http.Handler {
 			Path:      r.URL.Path,
 			OS:        os,
 		}
-		data, _ := json.Marshal(accesslog)
+		data, err := json.Marshal(accesslog)
+		if err != nil {
+		}
 		fmt.Println(string(data))
-
 	}
 	return http.HandlerFunc(fn)
 }
