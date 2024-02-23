@@ -26,6 +26,8 @@ func AccessLogger(h http.Handler) http.Handler {
 		}
 		data, err := json.Marshal(accesslog)
 		if err != nil {
+			fmt.Println(err)
+			return
 		}
 		fmt.Println(string(data))
 	}
