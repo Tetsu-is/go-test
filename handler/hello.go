@@ -13,6 +13,6 @@ func NewHelloHandler() *HelloHandler {
 }
 
 func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, World!"))
+	w.Write([]byte("HelloHandler is called!!"))
 	fmt.Println("HelloHandler is called")
 }
