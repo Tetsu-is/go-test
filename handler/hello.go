@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -13,6 +14,9 @@ func NewHelloHandler() *HelloHandler {
 }
 
 func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(5 * time.Second)
+	for i := 1; i <= 5; i++ {
+		fmt.Println(i)
+		time.Sleep(1 * time.Second)
+	}
 	w.Write([]byte("HelloHandler is finished!!"))
 }
