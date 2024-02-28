@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
+	"time"
 )
 
 type HelloHandler struct {
@@ -13,6 +13,6 @@ func NewHelloHandler() *HelloHandler {
 }
 
 func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("HelloHandler is called!!"))
-	fmt.Println("HelloHandler is called")
+	time.Sleep(5 * time.Second)
+	w.Write([]byte("HelloHandler is finished!!"))
 }
