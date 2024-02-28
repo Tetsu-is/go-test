@@ -23,7 +23,6 @@ const baseUrl = "http://localhost:8080"
 
 func Test1(t *testing.T) {
 	// 対象の API のみ Basic 認証がかかっているか、どうか。
-	t.Parallel()
 
 	if err := godotenv.Load("../.env"); err != nil {
 		t.Errorf("Error loading .env file")
@@ -88,7 +87,6 @@ func Test1(t *testing.T) {
 
 func Test2(t *testing.T) {
 	// 正しい User ID, Password で Basic 認証をクリアしアクセスできるかどうか。
-	t.Parallel()
 
 	if err := godotenv.Load("../.env"); err != nil {
 		t.Errorf("Error loading .env file")
