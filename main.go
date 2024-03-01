@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
+	ctxWaitSignal, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer stop()
 
 	const (
@@ -49,12 +49,14 @@ func main() {
 		server.ListenAndServe()
 	}()
 
-	<-ctx.Done()
+	//signalを待つctxWaitSignalを終了させる
+	<-ctxWaitSignal.Done()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	//シャットダウン用のコンテキストを作成し、30秒のタイムアウトを設定
+	ctxShutDown, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(ctxShutDown); err != nil {
 		log.Fatal(err)
 	}
 
