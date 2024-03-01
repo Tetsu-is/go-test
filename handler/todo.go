@@ -14,8 +14,6 @@ type TODOHandler struct {
 	svc *service.TODOService
 }
 
-// NewTODOHandler returns TODOHandler based http.Handler.
-// serviceをメンバに持つTODOHandlerを新しく作って返しているんだね
 func NewTODOHandler(svc *service.TODOService) *TODOHandler {
 	return &TODOHandler{
 		svc: svc,
