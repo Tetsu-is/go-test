@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"test/db"
 	"test/handler/router"
 	"time"
@@ -15,7 +14,7 @@ import (
 )
 
 func main() {
-	ctxWaitSignal, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer stop()
 
 	const (
@@ -41,24 +40,35 @@ func main() {
 		Handler: mux,
 	}
 
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	errCh := make(chan error)
 
 	go func() {
-		defer wg.Done()
-		server.ListenAndServe()
+		if err := server.ListenAndServe(); err != nil {
+			errCh <- err
+		}
 	}()
 
-	//signalを待つctxWaitSignalを終了させる
-	<-ctxWaitSignal.Done()
-
-	//シャットダウン用のコンテキストを作成し、30秒のタイムアウトを設定
-	ctxShutDown, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(ctxShutDown); err != nil {
-		log.Fatal(err)
+	select {
+	case <-ctx.Done(): // os.Interruptが来た段階で読み取り可能になる -> ctx.Done()でclosedされたチャネルが返される -> shutdownWithTimeout()が実行される??
+		shutdownWithTimeout(&server)
+	case err := <-errCh:
+		log.Printf("server error: %v", err)
 	}
 
-	wg.Wait()
+	stop()
+	//stop()の後はos.Interrupt, os.Kill後の既存の処理が実行される
 }
+
+func shutdownWithTimeout(srv *http.Server) {
+	//Contextを作成し、30秒のTimeoutを設定
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	//Timeoutを設定したContextを渡すことで無期限に待機しないようにする
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
+}
+
+//MEMO
+//Server.Shutdown()はActiveな通信を阻害することなく、ListenAndServe()を停止する関数である。

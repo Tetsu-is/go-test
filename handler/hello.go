@@ -14,7 +14,7 @@ func NewHelloHandler() *HelloHandler {
 }
 
 func (h *HelloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	for i := 1; i <= 5; i++ {
+	for i := 1; i <= 7; i++ {
 		fmt.Println(i)
 		time.Sleep(1 * time.Second)
 	}
