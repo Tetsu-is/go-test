@@ -29,8 +29,12 @@ func (s *TODOService) CreateTODO(ctx context.Context, subject, description strin
 		confirm = `SELECT subject, description, created_at, updated_at FROM todos WHERE id = ?`
 	)
 
-	s.db.PrepareContext(ctx, insert)
-	s.db.PrepareContext(ctx, confirm)
+	if _, err := s.db.PrepareContext(ctx, insert); err != nil {
+		return nil, err
+	}
+	if _, err := s.db.PrepareContext(ctx, confirm); err != nil {
+		return nil, err
+	}
 
 	result, err := s.db.ExecContext(ctx, insert, subject, description)
 	if err != nil {
