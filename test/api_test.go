@@ -3,10 +3,7 @@ package test
 import (
 	"encoding/base64"
 	"net/http"
-	"os"
 	"testing"
-
-	"github.com/joho/godotenv"
 )
 
 // Basic Auth Test
@@ -24,30 +21,25 @@ const baseUrl = "http://localhost:8080"
 func Test1(t *testing.T) {
 	// 対象の API のみ Basic 認証がかかっているか、どうか。
 
-	if err := godotenv.Load("../.env"); err != nil {
-		t.Errorf("Error loading .env file")
-	}
-
 	testcases := map[string]struct {
 		Endpoints    string
 		RequestType  string
 		ExpectStatus int
 	}{
+		"No_Auth_for /hello": {
+			Endpoints:    "/hello",
+			RequestType:  "GET",
+			ExpectStatus: 200,
+		},
 
 		"No_Auth_for /todos": {
-			Endpoints:    "/hello",
+			Endpoints:    "/todos",
 			RequestType:  "GET",
 			ExpectStatus: 200,
 		},
 
 		"No_Auth_for /do-panic": {
 			Endpoints:    "/do-panic",
-			RequestType:  "GET",
-			ExpectStatus: 200,
-		},
-
-		"No_Auth_for /hello": {
-			Endpoints:    "/hello",
 			RequestType:  "GET",
 			ExpectStatus: 200,
 		},
@@ -62,6 +54,7 @@ func Test1(t *testing.T) {
 	for name, tc := range testcases {
 		tc := tc
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			url := baseUrl + tc.Endpoints
 
 			req, err := http.NewRequest(tc.RequestType, url, nil)
@@ -88,13 +81,8 @@ func Test1(t *testing.T) {
 func Test2(t *testing.T) {
 	// 正しい User ID, Password で Basic 認証をクリアしアクセスできるかどうか。
 
-	if err := godotenv.Load("../.env"); err != nil {
-		t.Errorf("Error loading .env file")
-	}
-
-	userID := os.Getenv("BASIC_AUTH_USER_ID")
-	password := os.Getenv("BASIC_AUTH_PASSWORD")
-
+	userID := "myid"
+	password := "mypassword"
 	testcases := map[string]struct {
 		Endpoints    string
 		RequestType  string
