@@ -1,11 +1,11 @@
 package service
 
 import (
+	"api/model"
 	"context"
 	"database/sql"
 	"fmt"
 	"strings"
-	"test/model"
 )
 
 // A TODOService implements CRUD of TODO entities.

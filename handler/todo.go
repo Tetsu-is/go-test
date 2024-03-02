@@ -1,12 +1,12 @@
 package handler
 
 import (
+	"api/model"
+	"api/service"
 	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"test/model"
-	"test/service"
 )
 
 // A TODOHandler implements handling REST endpoints.

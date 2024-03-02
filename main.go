@@ -1,13 +1,13 @@
 package main
 
 import (
+	"api/db"
+	"api/handler/router"
 	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"test/db"
-	"test/handler/router"
 	"time"
 
 	"github.com/joho/godotenv"
