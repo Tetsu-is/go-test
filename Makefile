@@ -4,11 +4,26 @@ run :
 
 # run test
 test :
+	cd /test
+	go test .
+	cd ..
 
-compile :
-	goimports -w -l . 
-	go vet 
-	go build -o main main.go
+######
+.DEFAULT_GOAL := build
 
-review :
-	golangci-lint run
+fmt:
+	go fmt
+.PHONY: fmt
+
+lint: fmt
+	staticcheck
+.PHONY: lint
+
+vet: fmt
+	go vet
+.PHONY: vet
+
+build: vet
+	go mod tidy
+	go build
+.PHONY: build
