@@ -9,8 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -21,11 +19,6 @@ func main() {
 		defaultPort   = ":8080"
 		defaultDBPath = ".sqlite3/todo.db"
 	)
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	todoDB, err := db.NewDB(defaultDBPath)
 	if err != nil {
