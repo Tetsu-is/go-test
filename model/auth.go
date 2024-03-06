@@ -19,7 +19,6 @@ type (
 	}
 
 	SignUpResponse struct {
-		User
-		Token string `json:"token"`
+		User User `json:"user"`
 	}
 )

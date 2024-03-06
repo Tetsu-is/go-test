@@ -2,13 +2,14 @@ package handler
 
 import (
 	"api/model"
+	"api/service"
 	"context"
 	"encoding/json"
 	"net/http"
 )
 
 type SignUpHandler struct {
-	svc *service.SignUpService
+	svc *service.UserService
 }
 
 func NewSignUpHandler() *SignUpHandler {
@@ -47,8 +48,11 @@ func (h *SignUpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SignUpHandler) SignUp(ctx context.Context, req *model.SignUpRequest) (*model.SignUpResponse, error) {
-	if usr, err := h.svc.RegisterUser(ctx, req.UserName, req.Email, req.Password); err != nil {
+	usr, err := h.svc.RegisterUser(ctx, req.UserName, req.Email, req.Password)
+	if err != nil {
 		return nil, err
 	}
-	return &model.SignUpResponse{}, nil
+	return &model.SignUpResponse{
+		User: *usr,
+	}, nil
 }
