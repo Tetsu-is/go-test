@@ -67,3 +67,5 @@ func shutdownWithTimeout(srv *http.Server) {
 //Server.Shutdown()はActiveな通信を阻害することなく、ListenAndServe()を停止する関数である。
 
 //編集
+
+//devブランチ
