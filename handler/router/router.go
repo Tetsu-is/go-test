@@ -20,6 +20,6 @@ func NewRouter(todoDB *sql.DB) *http.ServeMux {
 	mux.Handle("/test", middleware.Auth(handler.NewTestHandler()))
 	mux.Handle("/auth/sign_up", handler.NewSignUpHandler(userService))
 	// mux.Handle("/auth/login", handler.NewLoginHandler(userService))
-	mux.Handle("/dev/users", handler.NewGetUsersHandler(userService))
+	mux.Handle("/dev/users", handler.NewGetUserHandler(userService))
 	return mux
 }
