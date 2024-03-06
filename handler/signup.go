@@ -12,8 +12,8 @@ type SignUpHandler struct {
 	svc *service.UserService
 }
 
-func NewSignUpHandler() *SignUpHandler {
-	return &SignUpHandler{}
+func NewSignUpHandler(svc *service.UserService) *SignUpHandler {
+	return &SignUpHandler{svc: svc}
 }
 
 func (h *SignUpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

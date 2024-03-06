@@ -11,11 +11,15 @@ import (
 func NewRouter(todoDB *sql.DB) *http.ServeMux {
 	// register routes
 	todoService := service.NewTODOService(todoDB)
+	userService := service.NewUserService(todoDB)
+
 	mux := http.NewServeMux()
 	mux.Handle("/todos", middleware.UserAgent(middleware.AccessLogger(handler.NewTODOHandler(todoService))))
 	mux.Handle("/do-panic", middleware.Recovery(handler.NewPanicHandler()))
 	mux.Handle("/hello", handler.NewHelloHandler())
 	mux.Handle("/test", middleware.Auth(handler.NewTestHandler()))
-	mux.Handle("sign_up", handler.NewSignUpHandler())
+	mux.Handle("/auth/sign_up", handler.NewSignUpHandler(userService))
+	// mux.Handle("/auth/login", handler.NewLoginHandler(userService))
+	mux.Handle("/dev/users", handler.NewGetUsersHandler(userService))
 	return mux
 }
