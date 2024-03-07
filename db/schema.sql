@@ -27,3 +27,17 @@ BEGIN
   UPDATE users SET updated_at = DATETIME('now') WHERE id == NEW.id;
 END;
 
+CREATE TABLE IF NOT EXISTS tokens (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  token TEXT NOT NULL UNIQUE,
+  created_at DATETIME NOT NULL DEFAULT (DATETIME('now')),
+  updated_at DATETIME NOT NULL DEFAULT (DATETIME('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CHECK(token <> '')
+);
+
+CREATE TRIGGER IF NOT EXISTS trigger_tokens_updated_at AFTER UPDATE ON tokens
+BEGIN
+  UPDATE tokens SET updated_at = DATETIME('now') WHERE id == NEW.id;
+END;
