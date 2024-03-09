@@ -1,11 +1,10 @@
 package service
 
 import (
+	"api/logic"
 	"api/model"
 	"context"
-	"crypto/rand"
 	"database/sql"
-	"math/big"
 )
 
 type UserService struct {
@@ -79,14 +78,12 @@ func (s *UserService) LoginUser(ctx context.Context, email string, password stri
 		return "", err
 	}
 
-	rand, err := rand.Int(rand.Reader, big.NewInt(1000))
+	token, err := logic.CreateJwtToken(User.ID)
 	if err != nil {
 		return "", err
 	}
 
-	newToken := rand.String()
-
-	result, err := s.db.ExecContext(ctx, insert, User.ID, newToken)
+	result, err := s.db.ExecContext(ctx, insert, User.ID, token)
 	if err != nil {
 		return "", err
 	}
@@ -98,7 +95,7 @@ func (s *UserService) LoginUser(ctx context.Context, email string, password stri
 	var insertedToken string
 	row.Scan(&insertedToken)
 
-	return newToken, nil
+	return insertedToken, nil
 }
 
 // for testing purpose
