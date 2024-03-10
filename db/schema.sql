@@ -26,4 +26,3 @@ CREATE TRIGGER IF NOT EXISTS trigger_users_updated_at AFTER UPDATE ON users
 BEGIN
   UPDATE users SET updated_at = DATETIME('now') WHERE id == NEW.id;
 END;
-
