@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func CheckToken(h *handler.TODOHandler) http.Handler {
+func ValidToken(h *handler.TODOHandler) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("token")
@@ -31,7 +31,7 @@ func CheckToken(h *handler.TODOHandler) http.Handler {
 		}
 
 		//tokenのuserIDが存在しない場合はUnAuthorizedを返す
-		ok := logic.ExistsID(userID, h.svc.CreateUserRepository()
+		ok := logic.ExistsID(userID)
 		if !ok {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
