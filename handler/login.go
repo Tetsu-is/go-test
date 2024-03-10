@@ -33,6 +33,13 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		cookie := &http.Cookie{
+			Name:  "token",
+			Value: res.Token,
+		}
+
+		http.SetCookie(w, cookie)
+
 		if err := json.NewEncoder(w).Encode(res); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

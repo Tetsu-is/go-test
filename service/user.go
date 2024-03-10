@@ -51,20 +51,10 @@ func (s *UserService) RegisterUser(ctx context.Context, userName string, email s
 
 func (s *UserService) LoginUser(ctx context.Context, email string, password string) (string, error) {
 	const (
-		read    = `SELECT id, email, password FROM users WHERE email = ? AND password = ?`
-		insert  = `INSERT INTO tokens(user_id, token) VALUES(?, ?)`
-		confirm = `SELECT token FROM tokens WHERE id = ?`
+		read = `SELECT id, email, password FROM users WHERE email = ? AND password = ?`
 	)
 
 	if _, err := s.db.PrepareContext(ctx, read); err != nil {
-		return "", err
-	}
-
-	if _, err := s.db.PrepareContext(ctx, insert); err != nil {
-		return "", err
-	}
-
-	if _, err := s.db.PrepareContext(ctx, confirm); err != nil {
 		return "", err
 	}
 
@@ -83,19 +73,7 @@ func (s *UserService) LoginUser(ctx context.Context, email string, password stri
 		return "", err
 	}
 
-	result, err := s.db.ExecContext(ctx, insert, User.ID, token)
-	if err != nil {
-		return "", err
-	}
-
-	id, _ := result.LastInsertId()
-
-	row = s.db.QueryRowContext(ctx, confirm, id)
-
-	var insertedToken string
-	row.Scan(&insertedToken)
-
-	return insertedToken, nil
+	return token, nil
 }
 
 // for testing purpose
