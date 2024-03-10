@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"strings"
 	"time"
 )
@@ -48,6 +49,32 @@ func CreateJwtToken(userID int64) (string, error) {
 	return token, nil
 }
 
-func ResolveJwtToken(token string) (int64, error) {
+func ResolveJwtToken(token string) (*model.Header, *model.Payload, error) {
 	splitToken := strings.Split(token, ".")
+	if len(splitToken) != 3 {
+		return nil, nil, errors.New("invalid token")
+	}
+
+	headerBytes, err := base64.RawURLEncoding.DecodeString(splitToken[0])
+	if err != nil {
+		return nil, nil, err
+	}
+
+	payloadBytes, err := base64.RawURLEncoding.DecodeString(splitToken[1])
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var header model.Header
+	err = json.Unmarshal(headerBytes, &header)
+	if err != nil {
+		return nil, nil, err
+	}
+	var payload model.Payload
+	err = json.Unmarshal(payloadBytes, &payload)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return &header, &payload, nil
 }
