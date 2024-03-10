@@ -76,6 +76,28 @@ func (s *UserService) LoginUser(ctx context.Context, email string, password stri
 	return token, nil
 }
 
+func (s *UserService) ReadUserByID(ctx context.Context, id int64) (*model.User, error) {
+	const (
+		read = `SELECT id, user_name, email, password, created_at, updated_at FROM users WHERE id = ?`
+	)
+
+	if _, err := s.db.PrepareContext(ctx, read); err != nil {
+		return nil, err
+	}
+
+	row := s.db.QueryRowContext(ctx, read, id)
+
+	var user model.User
+	if err := row.Scan(&user.ID, &user.UserName, &user.Email, &user.Password, &user.CreatedAt, &user.UpdatedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // for testing purpose
 func (s *UserService) ReadUser(ctx context.Context, offsetID int64, limit int64) ([]*model.User, error) {
 	const (
