@@ -1,14 +1,13 @@
 package middleware
 
 import (
-	"api/handler"
 	"api/logic"
 	"context"
 	"net/http"
 	"time"
 )
 
-func ValidToken(h *handler.TODOHandler) http.Handler {
+func ValidToken(h http.Handler) http.Handler {
 	//tokenが正しいか
 	//認可はserviceで行う
 
