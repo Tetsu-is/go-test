@@ -22,6 +22,10 @@ func SetOS(r *http.Request) *http.Request {
 }
 
 func GetOS(r *http.Request) string {
+	osValue := r.Context().Value(osKey)
+	if osValue == nil {
+		return ""
+	}
 	return r.Context().Value(osKey).(string)
 }
 

@@ -20,7 +20,7 @@ func CreateJwtToken(userID int64) (string, error) {
 	}
 	payload := model.Payload{
 		UserID: userID,
-		Exp:    time.Now().Add(time.Hour * 24),
+		Exp:    time.Now().Add(time.Hour),
 	}
 
 	//headerとpayloadをjsonに変換
