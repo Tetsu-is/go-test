@@ -78,7 +78,3 @@ func ResolveJwtToken(token string) (*model.Header, *model.Payload, error) {
 
 	return &header, &payload, nil
 }
-
-func ExistsID(userID int64) bool {
-	//
-}
