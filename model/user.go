@@ -21,4 +21,13 @@ type (
 	SignUpResponse struct {
 		User User `json:"user"`
 	}
+
+	LogInRequest struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	LogInResponse struct {
+		Token string `json:"token"`
+	}
 )

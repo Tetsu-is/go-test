@@ -1,6 +1,7 @@
 package service
 
 import (
+	"api/logic"
 	"api/model"
 	"context"
 	"database/sql"
@@ -48,6 +49,55 @@ func (s *UserService) RegisterUser(ctx context.Context, userName string, email s
 	return &user, nil
 }
 
+func (s *UserService) LoginUser(ctx context.Context, email string, password string) (string, error) {
+	const (
+		read    = `SELECT id, email, password FROM users WHERE email = ? AND password = ?`
+		insert  = `INSERT INTO tokens(user_id, token) VALUES(?, ?)`
+		confirm = `SELECT token FROM tokens WHERE id = ?`
+	)
+
+	if _, err := s.db.PrepareContext(ctx, read); err != nil {
+		return "", err
+	}
+
+	if _, err := s.db.PrepareContext(ctx, insert); err != nil {
+		return "", err
+	}
+
+	if _, err := s.db.PrepareContext(ctx, confirm); err != nil {
+		return "", err
+	}
+
+	row := s.db.QueryRowContext(ctx, read, email, password)
+
+	var User model.User
+	if err := row.Scan(&User.ID, &User.Email, &User.Password); err != nil {
+		if err == sql.ErrNoRows {
+			return "", err
+		}
+		return "", err
+	}
+
+	token, err := logic.CreateJwtToken(User.ID)
+	if err != nil {
+		return "", err
+	}
+
+	result, err := s.db.ExecContext(ctx, insert, User.ID, token)
+	if err != nil {
+		return "", err
+	}
+
+	id, _ := result.LastInsertId()
+
+	row = s.db.QueryRowContext(ctx, confirm, id)
+
+	var insertedToken string
+	row.Scan(&insertedToken)
+
+	return insertedToken, nil
+}
+
 // for testing purpose
 func (s *UserService) ReadUser(ctx context.Context, offsetID int64, limit int64) ([]*model.User, error) {
 	const (
@@ -63,7 +113,7 @@ func (s *UserService) ReadUser(ctx context.Context, offsetID int64, limit int64)
 		limit = 10
 	}
 
-	s.db.ExecContext(ctx, read, offsetID, limit)
+	s.db.ExecContext(ctx, read, offsetID, limit) //不要？
 	rows, err := s.db.QueryContext(ctx, read, offsetID, limit)
 	if err != nil {
 		return nil, err
