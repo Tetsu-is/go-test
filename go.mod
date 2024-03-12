@@ -8,4 +8,8 @@ require (
 	github.com/mileusna/useragent v1.3.4
 )
 
-require golang.org/x/crypto v0.21.0 // indirect
+require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
+)
